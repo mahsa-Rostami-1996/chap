@@ -3,45 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <title>مدیریت</title>
     <script src="https://code.jquery.com/jquery-3.5.1.min.js" ></script>
     <script>
-        function resetinputs(){
-            jQuery('input').val('');
-        }
         function showroll(){
             jQuery('.setting').hide();
             jQuery('.set-media').hide();
             jQuery('.set-roll').show();
-            resetinputs();
         };
         function showmedia(){
             jQuery('.setting').hide();
             jQuery('.set-media').show();
             jQuery('.set-roll').hide();
-            resetinputs();
         };
         function showsetting(){
             jQuery('.setting').show();
             jQuery('.set-media').hide();
             jQuery('.set-roll').hide();
-            resetinputs();
         };
     </script>
-    <script>
+     <script>
         function cancelmediaedit(){      
-                jQuery("#mediapunch").prop( "checked", false );
-                jQuery("#medialeefe").prop( "checked", false );
-                jQuery("#mediaactivity").prop( "checked", false );
+            jQuery("#mediapunch").prop( "checked", false );
+            jQuery("#medialeefe").prop( "checked", false );
+            jQuery("#mediaactivity").prop( "checked", false );
 
-                jQuery("#btnmediaaction").val('');
-                jQuery("#btnmediaaction").text('ثبت');
-                jQuery(".mediaeditcancel").addClass( "disabled" );
-                
-                jQuery('input#medianame').val('');
-                jQuery('input#mediaprice').val('');
+            jQuery("#btnmediaaction").val('');
+            jQuery("#btnmediaaction").text('ثبت');
+            jQuery(".mediaeditcancel").addClass( "disabled" );
+            
+            jQuery('input#medianame').val('');
+            jQuery('input#mediaprice').val('');
 
-                jQuery('#mediaid').val('');
-                jQuery('#mediaorder').val('insert');
+            jQuery('#mediaid').val('');
+            jQuery('#mediaorder').val('insert');
         };
          function setmediaforedit(id){       
             jQuery.get("getdata?id="+id+"&type=media",function(response)
@@ -96,7 +93,6 @@
 
                 var myJson= JSON.parse(response);
                 
-                jQuery('input#rollheight').val(myJson[0]['height']);
                 jQuery('input#rollwidth').val(myJson[0]['width']);
 
                 
@@ -116,12 +112,9 @@
                 jQuery(".rolledit").addClass( "disabled" );
                 jQuery(".rolleditcancel").addClass( "disabled" );
                 
-                jQuery('input#rollheight').val('');
                 jQuery('input#rollwidth').val('');
         }; 
     </script>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    <title>مدیریت</title>
 </head>
 <body>
     <header class="topnav mt-4">
@@ -141,11 +134,13 @@
                     </div>
                 </div>
                 <form  action="/setting_edit" method="get">
+                    @csrf
                     <div class="form-row">
                         <input type="hidden" name="order" value="setting"/>
                         <div class="form-group col-md-4">
                             <label for="settingroll" class="float-right">قیمت رول:</label>
-                            <input type="text" class="form-control text-center" name="settingroll" id="settingroll" placeholder="قیمت رول" value="{{$settingroll[0]->value}}">
+                            <input type="text" class="form-control text-center" name="settingroll" id="settingroll" placeholder="قیمت رول" value="<?php  echo $settingroll[0]->value; ?>">
+                          
                         </div>
                         <div class="form-group col-md-4">
                             <label for="settingleefe" class="float-right">جای داربست:</label>
@@ -155,21 +150,25 @@
                             <label for="settingpunch" class="float-right">قیمت پانچ:</label>
                             <input type="text" class="form-control text-center" name="settingpunch" id="settingpunch" placeholder="قیمت پانچ" value="{{$settingpunch[0]->value}}">
                         </div>
-                        <div class="form-group col-md-6">
+                        <div class="form-group col-md-4">
                             <label for="settingglue" class="float-right">قیمت هر متر چسب:</label>
                             <input type="text" class="form-control text-center" name="settingglue" id="settingglue" placeholder="قیمت هر متر چسب" value="{{$settingglue[0]->value}}">
                         </div>
-                        <div class="form-group col-md-6">
+                        <div class="form-group col-md-4">
+                            <label for="settingexactsize" class="float-right">پیش فرض اندازه دقیق:</label>
+                            <input type="text" class="form-control text-center" name="settingexactsize" id="settingexactsize" placeholder="مقدار پیش فرض اندازه ی دقیق چاپ" value="{{$settingexactsize[0]->value}}">
+                        </div>
+                        <div class="form-group col-md-4">
                             <label for="settingmedia" class="float-right">مدیای پیش‌فرض:</label>
                             <select name="settingmedia" id="settingmedia" class="form-control">
-                            <option value="2" >{{$settingmedia[0]->name}} </option>
+                            <option>{{$settingmedia[0]->name}} </option>
                                 @if(count($medias)>0)
                             
-                                @foreach($medias as $media)   
-                                    <option value="1" > @if(($media->parent) > 0){{$media->name}}@endif</option>  
-                                @endforeach
+                                    @foreach($medias as $media)   
+                                        <option> @if(($media->parent) == 0){{$media->name}}@endif</option>  
+                                    @endforeach
                             
-                        @endif   
+                                @endif   
                                 
                             </select>
                         </div>
@@ -300,14 +299,10 @@
                     <h4 class="text-center text-info ">تعریف رول</h4>
                     </div>
                 </div>
-                <form action="/roll_store" method="post" > 
+                <form action="/roll_store" method="post"> 
                     @csrf   
                     <div class="form-row ">
                         <input type="hidden" name="order" value="roll"/>
-                        <div class="form-group col-md-4">
-                            <label for="rollheight" class="float-right">طول:</label>
-                            <input type="text" class="form-control text-center" name="rollheight" id="rollheight" placeholder="طول">
-                        </div>
                         <div class="form-group col-md-4">
                             <label for="rollwidth" class="float-right">عرض:</label>
                             <input type="text" class="form-control text-center" name="rollwidth" id="rollwidth" placeholder="عرض ">
@@ -319,7 +314,7 @@
                     </div>
                     <input type="hidden" id="rollorder" name="rollorder" value="insert"/>
                     <input type="hidden" id="rollid" name="rollid" value=""/>
-                    <button onClick="cancelrolledit();"  class="btn text-secondary rolleditcancel disabled">لغو ویرایش</button>                                            
+                    <!-- <button onClick="cancelrolledit();"  class="btn text-secondary rolleditcancel disabled">لغو ویرایش</button>                                             -->
                     <button type="submit" id="btnrollaction" class="btn btn-primary rollstore">ثبت</button>
                 </form>
                 <hr>
@@ -333,7 +328,6 @@
                     <table class="table table-striped table-warning">
                         <thead>
                             <tr>
-                                <th class="text-center" scope="col">طول</th>
                                 <th class="text-center" scope="col">عرض</th>
                                 <th class="text-center" scope="col">فعال/غیرفعال</th>
                                 <th class="text-center" scope="col" >ویرایش</th>
@@ -343,7 +337,6 @@
                             <tbody>
                                 @foreach($rolls as $roll)                            
                                     <tr>
-                                        <td class="text-center">{{$roll->height}}</td>
                                         <td class="text-center">{{$roll->width}}</td>                                        
                                         <td class="text-center">
                                         @if(($roll->activity)=== 1) فعال @endif
